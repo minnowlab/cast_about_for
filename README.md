@@ -1,38 +1,158 @@
 # CastAboutFor
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/cast_about_for`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+CastAboutFor allows you easily and reliably query ActiveRecord.
 
 ## Installation
 
-Add this line to your application's Gemfile:
+Install this gem by adding this to your Gemfile:
 
 ```ruby
 gem 'cast_about_for'
 ```
 
-And then execute:
+Then run:
 
-    $ bundle
+``` shell
+bundle install
+```
 
-Or install it yourself as:
-
-    $ gem install cast_about_for
+Updating is as simple as `bundle update cast_about_for`.
 
 ## Usage
 
-TODO: Write usage instructions here
+### Setting the Query Colum
 
-## Development
+First, you must set some query colums in your model using the `cast_about_for_params` macro:
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+``` ruby
+class Product < ActiveRecord::Base
+  cast_about_for_params equal: ['name', 'sex']
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+  # ...
+end
+```
 
-## Contributing
+### Start the Query:
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/cast_about_for. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+You can always use the `#cast_about_for` class method to query: 
+
+``` ruby
+def index
+  @products = Product.cast_about_for(params, jsonapi: true)
+end
+```
+
+Want to count records? Simple:
+
+```ruby
+  Product.cast_about_for(params, jsonapi: true).count
+```
+
+## cast_about_for_params Configure
+
+### Equal
+
+If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (name = 'iPhone')`, you can pass it as an option:
+
+``` ruby
+# params = {name: 'iPhone'}
+# User.cast_about_for(params, jsonapi: false)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params equal: ['name']
+
+  # ...
+end
+```
+
+### Like
+
+If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (introduce LIKE '%To%')`, you can pass it as an option:
+
+``` ruby
+# params = {introduce: 'To'}
+# User.cast_about_for(params, jsonapi: false)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params like: ['introduce']
+
+  # ...
+end
+```
+
+### After
+
+If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date >= '2016-07-05 13:09:00')`, you can pass it as an option:
+
+``` ruby
+# params = {started_at: '2016-07-05 13:09:00'}
+# User.cast_about_for(params, jsonapi: false)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params after: { production_date: "started_at" }
+
+  # ...
+end
+```
+
+### Before
+
+If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date <= '2016-07-05 13:09:00')`, you can pass it as an option:
+
+``` ruby
+# params = {before_at: '2016-07-05 13:09:00'}
+# User.cast_about_for(params, jsonapi: false)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params before: { production_date: "before_at" }
+
+  # ...
+end
+```
+
+### Enum
+
+If you have a column use enum, you can pass it as an option:
+
+``` ruby
+# params = {category: "food"}
+# User.cast_about_for(params, jsonapi: false)
+
+class Product < ActiveRecord::Base
+  enum category: {food: 0}
+  cast_about_for_params enum: ['category']
+
+  # ...
+end
+```
+
+## Advanced Usage
+
+### JSON API
+
+If you are using `JSON API`, you can set in the `#cast_about_for`: 
+
+```ruby
+  Product.cast_about_for(params, jsonapi: true) # JSON API
+  Product.cast_about_for(params, jsonapi: false) # or not
+```
+
+### Custom Query by Block
+
+```ruby
+  Product.cast_about_for(params, jsonapi: true) do |product|
+    product.where(name: 'hello')
+    next product
+  end
+```
+
+## Collaborators
+
+ByStar is actively maintained by Ryan Biggs (radar) and Johnny Shields (johnnyshields)
+
+Thank you to the following people:
+
+* The creators of the [by_star](https://github.com/radar/by_star) gem
 
 
 ## License
