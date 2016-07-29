@@ -148,8 +148,6 @@ If you are using `JSON API`, you can set in the `#cast_about_for`:
 
 ## Collaborators
 
-ByStar is actively maintained by Ryan Biggs (radar) and Johnny Shields (johnnyshields)
-
 Thank you to the following people:
 
 * The creators of the [by_star](https://github.com/radar/by_star) gem
