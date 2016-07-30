@@ -20,7 +20,7 @@ Updating is as simple as `bundle update cast_about_for`.
 
 ## Usage
 
-### Setting the Query Colum
+### Setting the Query Column
 
 First, you must set some query colums in your model using the `cast_about_for_params` macro:
 
@@ -56,7 +56,7 @@ If you want to use a column query the SQL look like `SELECT "products".* FROM "p
 
 ``` ruby
 # params = {name: 'iPhone'}
-# User.cast_about_for(params, jsonapi: false)
+# Product.cast_about_for(params, jsonapi: false)
 
 class Product < ActiveRecord::Base
   cast_about_for_params equal: ['name']
@@ -71,7 +71,7 @@ If you want to use a column query the SQL look like `SELECT "products".* FROM "p
 
 ``` ruby
 # params = {introduce: 'To'}
-# User.cast_about_for(params, jsonapi: false)
+# Product.cast_about_for(params, jsonapi: false)
 
 class Product < ActiveRecord::Base
   cast_about_for_params like: ['introduce']
@@ -86,7 +86,7 @@ If you want to use a column query the SQL look like `SELECT "products".* FROM "p
 
 ``` ruby
 # params = {started_at: '2016-07-05 13:09:00'}
-# User.cast_about_for(params, jsonapi: false)
+# Product.cast_about_for(params, jsonapi: false)
 
 class Product < ActiveRecord::Base
   cast_about_for_params after: { production_date: "started_at" }
@@ -101,7 +101,7 @@ If you want to use a column query the SQL look like `SELECT "products".* FROM "p
 
 ``` ruby
 # params = {before_at: '2016-07-05 13:09:00'}
-# User.cast_about_for(params, jsonapi: false)
+# Product.cast_about_for(params, jsonapi: false)
 
 class Product < ActiveRecord::Base
   cast_about_for_params before: { production_date: "before_at" }
@@ -116,7 +116,7 @@ If you have a column use enum, you can pass it as an option:
 
 ``` ruby
 # params = {category: "food"}
-# User.cast_about_for(params, jsonapi: false)
+# Product.cast_about_for(params, jsonapi: false)
 
 class Product < ActiveRecord::Base
   enum category: {food: 0}
