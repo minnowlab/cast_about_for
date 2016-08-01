@@ -4,23 +4,14 @@ module CastAboutFor
 
   module ClassMethods
     def cast_about_for *args, &block
-      options = args.extract_options!
+      options = args.extract_options!.dup
+
       @params = options[:jsonapi] ? args[0][:filter] : args[0]
 
       @seach_model = self.all
 
       @options.each do |key, value|
-        if key == :equal
-          self.cast_about_for_by_equal(value)
-        elsif key == :like
-          self.cast_about_for_by_like(value)
-        elsif key == :after
-          self.cast_about_for_by_after(value)
-        elsif key == :before
-          self.cast_about_for_by_before(value)
-        elsif key == :enum
-          self.cast_about_for_by_enum(value)
-        end
+        send("cast_about_for_by_#{key}", value)
       end
 
       @seach_model = yield(@seach_model) if block_given?
