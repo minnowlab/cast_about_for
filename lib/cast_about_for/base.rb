@@ -4,7 +4,9 @@ module CastAboutFor
 
   module ClassMethods
     def cast_about_for *args, &block
-      options = args.extract_options!.dup
+      # options = args.extract_options!.dup
+      options = args.dup
+      options = options.extract_options!
 
       @params = options[:jsonapi] ? args[0][:filter] : args[0]
 
@@ -32,15 +34,15 @@ module CastAboutFor
     end
 
     def cast_about_for_by_after search_values
-      search_values.each do |key, value|
-        @seach_model = @seach_model.after(@params[value.to_sym].to_datetime, field: key) if @params.present? && @params.has_key?(value.to_sym)
-      end
+      # search_values.each do |key, value|
+      #   @seach_model = @seach_model.after(@params[value.to_sym].to_datetime, field: key) if @params.present? && @params.has_key?(value.to_sym)
+      # end
     end
 
     def cast_about_for_by_before search_values
-      search_values.each do |key, value|
-        @seach_model = @seach_model.before(@params[value.to_sym].to_datetime, field: key) if @params.present? && @params.has_key?(value.to_sym)
-      end
+      # search_values.each do |key, value|
+      #   @seach_model = @seach_model.before(@params[value.to_sym].to_datetime, field: key) if @params.present? && @params.has_key?(value.to_sym)
+      # end
     end
 
     def cast_about_for_by_enum search_values
