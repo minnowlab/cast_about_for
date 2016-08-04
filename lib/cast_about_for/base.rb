@@ -8,10 +8,10 @@ module CastAboutFor
       options = args.dup
       options = options.extract_options!
 
-      @params = options[:jsonapi] ? args[0][:filter] : args[0]
-
+      jsonapi = options[:jsonapi] || false
+      @params = jsonapi ? args[0][:filter] : args[0]
+      
       @seach_model = self.all
-
       @options.each do |key, value|
         send("cast_about_for_by_#{key}", value)
       end
