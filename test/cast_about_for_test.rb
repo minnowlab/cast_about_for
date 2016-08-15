@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative 'test_helper'
 require 'cast_about_for'
 
 test_framework = defined?(MiniTest::Test) ? MiniTest::Test : MiniTest::Unit::TestCase
@@ -16,6 +16,8 @@ def setup!
   end
 end
 
+setup!
+
 class User < ActiveRecord::Base
   enum profession: {other_profession: 0, student: 1, worker: 2, teacher: 3}
   cast_about_for_params(
@@ -31,7 +33,6 @@ class User < ActiveRecord::Base
   )
 end
 
-setup!
 
 class CastAboutForTest < test_framework
   def setup
