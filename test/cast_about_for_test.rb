@@ -66,6 +66,13 @@ class CastAboutForTest < test_framework
     assert_equal User.cast_about_for(params, jsonapi: false).count, 2
   end
 
+  def test_cast_about_for_jsonapi_it_is_false_and_not_disploay_jsonapi_option
+    params = {
+      introduce: 'To'
+    }
+    assert_equal User.cast_about_for(params).count, 2
+  end
+
   def test_cast_about_for_jsonapi_it_is_true
     params = {
       filter: {
@@ -81,7 +88,7 @@ class CastAboutForTest < test_framework
     params = {
       profession: "other_profession"
     }
-    assert_equal User.cast_about_for(params, jsonapi: false).count, 3
+    assert_equal User.cast_about_for(params).count, 3
   end
 
   def test_cast_about_for_block_search
@@ -89,7 +96,7 @@ class CastAboutForTest < test_framework
       profession: "other_profession"
     }
 
-    users = User.cast_about_for params, jsonapi: false do |seach_model|
+    users = User.cast_about_for params do |seach_model|
       seach_model = seach_model.where(name: 'Zita')
       next seach_model
     end
