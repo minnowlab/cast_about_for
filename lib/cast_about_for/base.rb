@@ -4,6 +4,7 @@ module CastAboutFor
 
   module ClassMethods
     def cast_about_for *args, &block
+      cast_about_params = class_variable_get(:@@cast_about_for_params).dup
       options = args.dup
       options = options.extract_options!
 
@@ -11,7 +12,7 @@ module CastAboutFor
       params = jsonapi ? args[0][:filter] : args[0]
       
       seach_model = self.all
-      @options.each do |key, value|
+      cast_about_params.each do |key, value|
         seach_model = send("cast_about_for_by_#{key}", value, params, seach_model)
       end
 
