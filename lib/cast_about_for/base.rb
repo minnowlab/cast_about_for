@@ -17,14 +17,13 @@ module CastAboutFor
         validate_keys = options.slice(*CAST_ABOUT_FOR_KEY)
 
         validate_keys.each do |key, value|
-          validator_name = "Validator::#{key.to_s.camelize}Validator"
-          validator = validator_name.constantize
-          a = validator.new(value)
           value = value.is_a?(Array) ? value : value.keys
-          value.each do |k|
-            raise ArgumentError, "Unknown column: #{k}" unless self.respond_to?(k) || self.column_names.include?(k.to_s)
+          value.each do |attribute|
+            attribute = attribute.is_a?(Hash) ? attribute.first.first : attribute
+            raise ArgumentError, "Unknown column: #{attribute}" unless self.respond_to?(attribute) || self.column_names.include?(attribute.to_s)
           end
         end
+
         class_variable_set(:@@cast_about_for_params, options)
       end
     end

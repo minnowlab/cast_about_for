@@ -19,15 +19,28 @@ module CastAboutFor
     end
 
     def cast_about_for_by_equal search_values, params, seach_model
+
       search_values.each do |search_value|
-        seach_model = seach_model.where("#{search_value} = ?", params[search_value.to_sym]) if params.present? && params.has_key?(search_value.to_sym)
+        if search_value.is_a?(Hash)
+          search_column = search_value.first.first
+          search_name = search_value.first.last
+        else          
+          search_column = search_name = search_value
+        end
+        seach_model = seach_model.where("#{search_column} = ?", params[search_name.to_sym]) if params.present? && params.has_key?(search_name.to_sym)
       end
       seach_model
     end
 
     def cast_about_for_by_like search_values, params, seach_model
       search_values.each do |search_value|
-        seach_model = seach_model.where("#{search_value} LIKE ?", "%#{params[search_value.to_sym]}%") if params.present? && params.has_key?(search_value.to_sym)
+        if search_value.is_a?(Hash)
+          search_column = search_value.first.first
+          search_name = search_value.first.last
+        else          
+          search_column = search_name = search_value
+        end
+        seach_model = seach_model.where("#{search_column} LIKE ?", "%#{params[search_name.to_sym]}%") if params.present? && params.has_key?(search_name.to_sym)
       end
       seach_model
     end
@@ -48,7 +61,13 @@ module CastAboutFor
 
     def cast_about_for_by_enum search_values, params, seach_model
       search_values.each do |search_value|
-        seach_model = seach_model.where("#{search_value} = ?", self.send(search_value.pluralize.to_sym)[params[search_value.to_sym]]) if params.present? && params.has_key?(search_value.to_sym)
+        if search_value.is_a?(Hash)
+          search_column = search_value.first.first
+          search_name = search_value.first.last
+        else          
+          search_column = search_name = search_value
+        end
+        seach_model = seach_model.where("#{search_column} = ?", self.send(search_column.to_s.pluralize.to_sym)[params[search_name.to_sym]]) if params.present? && params.has_key?(search_name.to_sym)
       end
       seach_model
     end

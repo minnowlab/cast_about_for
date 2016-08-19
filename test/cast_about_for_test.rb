@@ -1,22 +1,8 @@
 require_relative 'test_helper'
+require_relative 'cast_about_for_setup'
 require 'cast_about_for'
 
 test_framework = defined?(MiniTest::Test) ? MiniTest::Test : MiniTest::Unit::TestCase
-
-def connect!
-  ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
-end
-
-def setup!
-  connect!
-  {
-    'users' => 'name VARCHAR(32), introduce VARCHAR(32), sex BOOLEAN, profession INTEGER, sign_in_count INTEGER DEFAULT 0, current_sign_in_at DATETIME'
-  }.each do |table_name, columns_as_sql_string|
-    ActiveRecord::Base.connection.execute "CREATE TABLE #{table_name} (id INTEGER NOT NULL PRIMARY KEY, #{columns_as_sql_string})"
-  end
-end
-
-setup!
 
 class User < ActiveRecord::Base
   enum profession: {other_profession: 0, student: 1, worker: 2, teacher: 3}
@@ -63,14 +49,14 @@ class CastAboutForTest < test_framework
     params = {
       introduce: 'To'
     }
-    assert_equal User.cast_about_for(params, jsonapi: false).count, 2
+    assert_equal 2, User.cast_about_for(params, jsonapi: false).count
   end
 
   def test_cast_about_for_jsonapi_it_is_false_and_not_disploay_jsonapi_option
     params = {
       introduce: 'To'
     }
-    assert_equal User.cast_about_for(params).count, 2
+    assert_equal 2, User.cast_about_for(params).count
   end
 
   def test_cast_about_for_jsonapi_it_is_true
@@ -81,14 +67,14 @@ class CastAboutForTest < test_framework
         before_at: '2016-07-09 13:09:00'
       }
     }
-    assert_equal User.cast_about_for(params, jsonapi: true).count, 1
+    assert_equal 1, User.cast_about_for(params, jsonapi: true).count
   end
 
   def test_cast_about_for_enum_search
     params = {
       profession: "other_profession"
     }
-    assert_equal User.cast_about_for(params).count, 3
+    assert_equal 3, User.cast_about_for(params).count
   end
 
   def test_cast_about_for_block_search
@@ -100,6 +86,6 @@ class CastAboutForTest < test_framework
       seach_model = seach_model.where(name: 'Zita')
       next seach_model
     end
-    assert_equal users.count, 1
+    assert_equal 1, users.count
   end
 end
