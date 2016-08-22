@@ -18,6 +18,8 @@ module CastAboutFor
       return seach_model
     end
 
+    private
+
     def cast_about_for_by_equal search_values, params, seach_model
 
       search_values.each do |search_value|
