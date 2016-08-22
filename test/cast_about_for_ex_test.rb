@@ -21,7 +21,7 @@ class Admin < ActiveRecord::Base
 end
 
 
-class CastAboutForTest < test_framework
+class CastAboutForExTest < test_framework
   def setup
     connection = ActiveRecord::Base.connection
     cleaner = ->(source) {
