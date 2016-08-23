@@ -60,11 +60,10 @@ module CastAboutFor
     end
 
     def obtain_value(value)
-      if value.is_a?(Hash)
-          [value.first.first, value.first.last]
-      else          
-          [value, value]
-      end
+      case value
+        when Hash then [value.first.first, value.first.last]
+        else [value, value]
+      end          
     end
   end
 end
