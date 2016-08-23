@@ -23,12 +23,7 @@ module CastAboutFor
     def cast_about_for_by_equal search_values, params, seach_model
 
       search_values.each do |search_value|
-        if search_value.is_a?(Hash)
-          search_column = search_value.first.first
-          search_name = search_value.first.last
-        else          
-          search_column = search_name = search_value
-        end
+        search_column, search_name = obtain_value(search_value)
         seach_model = seach_model.where("#{search_column} = ?", params[search_name.to_sym]) if params.present? && params.has_key?(search_name.to_sym)
       end
       seach_model
@@ -36,12 +31,7 @@ module CastAboutFor
 
     def cast_about_for_by_like search_values, params, seach_model
       search_values.each do |search_value|
-        if search_value.is_a?(Hash)
-          search_column = search_value.first.first
-          search_name = search_value.first.last
-        else          
-          search_column = search_name = search_value
-        end
+        search_column, search_name = obtain_value(search_value)
         seach_model = seach_model.where("#{search_column} LIKE ?", "%#{params[search_name.to_sym]}%") if params.present? && params.has_key?(search_name.to_sym)
       end
       seach_model
@@ -63,15 +53,18 @@ module CastAboutFor
 
     def cast_about_for_by_enum search_values, params, seach_model
       search_values.each do |search_value|
-        if search_value.is_a?(Hash)
-          search_column = search_value.first.first
-          search_name = search_value.first.last
-        else          
-          search_column = search_name = search_value
-        end
+        search_column, search_name = obtain_value(search_value)
         seach_model = seach_model.where("#{search_column} = ?", self.send(search_column.to_s.pluralize.to_sym)[params[search_name.to_sym]]) if params.present? && params.has_key?(search_name.to_sym)
       end
       seach_model
+    end
+
+    def obtain_value(value)
+      if value.is_a?(Hash)
+          [value.first.first, value.first.last]
+      else          
+          [value, value]
+      end
     end
   end
 end
