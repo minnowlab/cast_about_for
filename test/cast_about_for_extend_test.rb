@@ -52,6 +52,16 @@ class CastAboutForExtendTest < test_framework
     assert_equal 1, Admin.cast_about_for(params, jsonapi: true).count
   end
 
+  def test_cast_about_for_equal_search
+    params = { nick_name: "Tom" }
+    assert_equal 1, Admin.cast_about_for(params).count
+  end
+
+  def test_cast_about_for_like_search
+    params = { info: "To" }
+    assert_equal 2, Admin.cast_about_for(params).count
+  end
+
   def test_cast_about_for_enum_search
     params = {
       pro: "other_profession"

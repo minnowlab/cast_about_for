@@ -21,7 +21,6 @@ module CastAboutFor
     private
 
     def cast_about_for_by_equal search_values, params, seach_model
-
       search_values.each do |search_value|
         search_column, search_name = obtain_value(search_value)
         seach_model = seach_model.where("#{search_column} = ?", params[search_name.to_sym]) if params.present? && params.has_key?(search_name.to_sym)
