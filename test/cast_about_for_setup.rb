@@ -1,3 +1,5 @@
+require_relative 'test_helper'
+require 'cast_about_for'
 
 ActiveRecord::Base.establish_connection adapter: 'sqlite3', database: ':memory:'
 
@@ -17,5 +19,91 @@ ActiveRecord::Base.connection.create_table :admins do |t|
   t.integer :profession
   t.integer :sign_in_count, default: 0
   t.datetime :current_sign_in_at
-
 end
+
+ActiveRecord::Base.connection.create_table :comments do |t|
+  t.string :details
+  t.integer :user_id  
+  t.integer :post_id
+  t.datetime :created_at
+  t.datetime :updated_at
+end
+
+ActiveRecord::Base.connection.create_table :posts do |t|
+  t.string :title
+  t.text :details
+  t.integer :user_id
+  t.datetime :created_at
+  t.datetime :updated_at
+end
+
+class User < ActiveRecord::Base
+  has_many :posts
+  has_many :comments
+  enum profession: {other_profession: 0, student: 1, worker: 2, teacher: 3}
+  cast_about_for_params(
+    equal: ['name', 'sex'], 
+    like: ['introduce'], 
+    after: { 
+      current_sign_in_at: "started_at"
+    }, 
+    before: {
+      current_sign_in_at: "before_at"
+    },
+    enum: ['profession']
+  )
+end
+
+class Admin < ActiveRecord::Base
+  enum profession: {other_profession: 0, student: 1, worker: 2, teacher: 3}
+  cast_about_for_params(
+    equal: [{ name: 'nick_name' }, { sex: 'se'}], 
+    like: [{introduce: 'info'}], 
+    after: { 
+      current_sign_in_at: "started_at"
+    }, 
+    before: {
+      current_sign_in_at: "before_at"
+    },
+    enum: [{profession: 'pro'}]
+  )
+end
+
+class Post < ActiveRecord::Base
+  belongs_to :user
+  has_many :comments
+  cast_about_for_params(
+    like: ['title', 'details'], 
+    after: { 
+      created_at: "created_at"
+    }, 
+    before: {
+      created_at: "created_at"
+    }
+  )
+end
+
+class Comment < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :post
+  cast_about_for_params(
+    like: ['details'], 
+    after: { 
+      created_at: "created_at"
+    }, 
+    before: {
+      created_at: "created_at"
+    }
+  )
+end
+
+
+
+
+
+
+
+
+
+
+

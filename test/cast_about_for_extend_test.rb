@@ -1,27 +1,8 @@
-require_relative 'test_helper'
 require_relative 'cast_about_for_setup'
-require 'cast_about_for'
 
 test_framework = defined?(MiniTest::Test) ? MiniTest::Test : MiniTest::Unit::TestCase
 
-
-class Admin < ActiveRecord::Base
-  enum profession: {other_profession: 0, student: 1, worker: 2, teacher: 3}
-  cast_about_for_params(
-    equal: [{ name: 'nick_name' }, { sex: 'se'}], 
-    like: [{introduce: 'info'}], 
-    after: { 
-      current_sign_in_at: "started_at"
-    }, 
-    before: {
-      current_sign_in_at: "before_at"
-    },
-    enum: [{profession: 'pro'}]
-  )
-end
-
-
-class CastAboutForExTest < test_framework
+class CastAboutForExtendTest < test_framework
   def setup
     connection = ActiveRecord::Base.connection
     cleaner = ->(source) {

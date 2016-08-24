@@ -1,24 +1,6 @@
-require_relative 'test_helper'
 require_relative 'cast_about_for_setup'
-require 'cast_about_for'
 
 test_framework = defined?(MiniTest::Test) ? MiniTest::Test : MiniTest::Unit::TestCase
-
-class User < ActiveRecord::Base
-  enum profession: {other_profession: 0, student: 1, worker: 2, teacher: 3}
-  cast_about_for_params(
-    equal: ['name', 'sex'], 
-    like: ['introduce'], 
-    after: { 
-      current_sign_in_at: "started_at"
-    }, 
-    before: {
-      current_sign_in_at: "before_at"
-    },
-    enum: ['profession']
-  )
-end
-
 
 class CastAboutForTest < test_framework
   def setup
@@ -70,6 +52,26 @@ class CastAboutForTest < test_framework
     assert_equal 1, User.cast_about_for(params, jsonapi: true).count
   end
 
+  def test_cast_about_for_equal_search
+    params = { name: "Tom" }
+    assert_equal 1, User.cast_about_for(params).count
+  end
+
+  def test_cast_about_for_like_search
+    params = { introduce: "To" }
+    assert_equal 2, User.cast_about_for(params).count
+  end
+
+  def test_cast_about_for_before_search
+    params = { before_at: "2016-07-01" }
+    assert_equal 6, User.cast_about_for(params).count
+  end
+
+  def test_cast_about_for_after_search
+    params = { started_at: "2016-07-01" }
+    assert_equal 4, User.cast_about_for(params).count    
+  end
+
   def test_cast_about_for_enum_search
     params = {
       profession: "other_profession"
@@ -87,5 +89,31 @@ class CastAboutForTest < test_framework
       next seach_model
     end
     assert_equal 1, users.count
+  end
+
+  def test_the_reloation_and_find_poster_which_the_comments_include_the_details_point
+    tom_post = Post.create(title: "tom post", details: "this is tom post", user: @tom)
+    tom_extra_post = Post.create(title: "tom post extra", details: "this is tom post", user: @tom)
+    jack_post = Post.create(title: "jack post", details: "this is jack post", user: @jack)
+    jack_extra_post = Post.create(title: "jack post extra", details: "this is jack post", user: @jack)
+    amy_post = Post.create(title: "amy post", details: "this is amy post", user: @amy)
+    amy_extra_post = Post.create(title: "amy post extra", details: "this is amy post", user: @amy)
+    Comment.create(details: "tom comment", user: @tom, post: jack_post)
+    Comment.create(details: "tom comment", user: @tom, post: jack_extra_post)
+    Comment.create(details: "tom comment point", user: @tom, post: amy_post)
+    Comment.create(details: "tom comment", user: @tom, post: amy_extra_post)
+    Comment.create(details: "jack comment", user: @jack, post: tom_post)
+    Comment.create(details: "jack comment", user: @jack, post: tom_extra_post)
+    Comment.create(details: "jack comment", user: @jack, post: amy_post)
+    Comment.create(details: "jack comment", user: @jack, post: amy_extra_post)
+    Comment.create(details: "amy comment point", user: @amy, post: jack_post)
+    Comment.create(details: "amy comment", user: @amy, post: jack_extra_post)
+    Comment.create(details: "amy comment", user: @amy, post: tom_post)
+    Comment.create(details: "amy comment", user: @amy, post: tom_extra_post)
+
+    users = User.cast_about_for() do |seach_model|
+              seach_model = seach_model.joins(posts: :comments).where('comments.details LIKE ?', "%point%")
+            end
+    assert_equal 2, users.count
   end
 end
