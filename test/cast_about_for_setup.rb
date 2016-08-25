@@ -10,6 +10,7 @@ ActiveRecord::Base.connection.create_table :users do |t|
   t.integer :profession
   t.integer :sign_in_count, default: 0
   t.datetime :current_sign_in_at
+  t.datetime :created_at
 end
 
 ActiveRecord::Base.connection.create_table :admins do |t|
@@ -19,6 +20,7 @@ ActiveRecord::Base.connection.create_table :admins do |t|
   t.integer :profession
   t.integer :sign_in_count, default: 0
   t.datetime :current_sign_in_at
+  t.datetime :created_at
 end
 
 ActiveRecord::Base.connection.create_table :comments do |t|
@@ -45,10 +47,10 @@ class User < ActiveRecord::Base
     equal: ['name', 'sex'], 
     like: ['introduce'], 
     after: { 
-      current_sign_in_at: "started_at"
+      field: "by_time", time: "started_at"
     }, 
     before: {
-      current_sign_in_at: "before_at"
+      field: "by_time", time: "before_at"
     },
     enum: ['profession']
   )
@@ -60,10 +62,10 @@ class Admin < ActiveRecord::Base
     equal: [{ name: 'nick_name' }, { sex: 'se'}], 
     like: [{introduce: 'info'}], 
     after: { 
-      current_sign_in_at: "started_at"
+      field: "by_time", time: "started_at"
     }, 
     before: {
-      current_sign_in_at: "before_at"
+      field: "by_time", time: "before_at"
     },
     enum: [{profession: 'pro'}]
   )
@@ -75,10 +77,10 @@ class Post < ActiveRecord::Base
   cast_about_for_params(
     like: ['title', 'details'], 
     after: { 
-      created_at: "created_at"
+      field: "by_time", time: "created_at"
     }, 
     before: {
-      created_at: "created_at"
+      field: "by_time", time: "created_at"
     }
   )
 end
@@ -89,10 +91,10 @@ class Comment < ActiveRecord::Base
   cast_about_for_params(
     like: ['details'], 
     after: { 
-      created_at: "created_at"
+      field: "by_time", time: "created_at"
     }, 
     before: {
-      created_at: "created_at"
+       field: "by_time", time: "created_at"
     }
   )
 end

@@ -17,7 +17,7 @@ module CastAboutFor
         validate_keys = options.slice(*CAST_ABOUT_FOR_KEY)
 
         validate_keys.each do |key, value|
-          value = value.is_a?(Array) ? value : value.keys
+          next unless value.is_a?(Array)
           value.each do |attribute|
             attribute = attribute.is_a?(Hash) ? attribute.first.first : attribute
             raise ArgumentError, "Unknown column: #{attribute}" unless self.respond_to?(attribute) || self.column_names.include?(attribute.to_s)

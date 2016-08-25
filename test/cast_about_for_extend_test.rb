@@ -46,7 +46,8 @@ class CastAboutForExtendTest < test_framework
       filter: {
         nick_name: 'Amy',
         started_at: '2016-07-05 13:09:00',
-        before_at: '2016-07-09 13:09:00'
+        before_at: '2016-07-09 13:09:00',
+        by_time: "current_sign_in_at"
       }
     }
     assert_equal 1, Admin.cast_about_for(params, jsonapi: true).count
