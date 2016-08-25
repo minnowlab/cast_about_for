@@ -64,6 +64,34 @@ class Product < ActiveRecord::Base
   # ...
 end
 ```
+OR you want to alias of the 'name' column
+
+``` ruby
+# params = { nick_name: "iPhone"}
+# User.cast_about_for(params, jsonapi: false)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params equal: [{name: "nick_name"}]
+
+  # ...
+end
+```
+
+!Your `name` of the `params` must be instead of `nick_name`.
+
+AND you have other columns, you can do it like below.
+
+``` ruby
+# params = { nick_name: "iPhone", info: "sales", price: "600"}
+# User.cast_about_for(params, jsonapi: false)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params equal: [{name: "nick_name"}, {information: "info"}, price]
+
+  # ...
+end
+```
+
 
 ### Like
 
@@ -80,6 +108,15 @@ class Product < ActiveRecord::Base
 end
 ```
 
+Suck as `Equal`. If you want alias of 'introduce', you can
+
+``` ruby
+class Product < ActiveRecord::Base
+  cast_about_for_params like: [{introduce: 'intr'}]
+
+  # ...
+end
+```
 ### After
 
 If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date >= '2016-07-05 13:09:00')`, you can pass it as an option:
