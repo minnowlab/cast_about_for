@@ -37,6 +37,7 @@ ActiveRecord::Base.connection.create_table :posts do |t|
   t.integer :user_id
   t.datetime :created_at
   t.datetime :updated_at
+  t.datetime :published_at
 end
 
 class User < ActiveRecord::Base
@@ -90,12 +91,8 @@ class Comment < ActiveRecord::Base
   belongs_to :post
   cast_about_for_params(
     like: ['details'], 
-    after: { 
-      field: "by_time", time: "created_at"
-    }, 
-    before: {
-       field: "by_time", time: "created_at"
-    }
+    after: {time: "after_time"}, 
+    before: {time: "before_time"}
   )
 end
 

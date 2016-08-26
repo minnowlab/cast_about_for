@@ -77,7 +77,7 @@ class Product < ActiveRecord::Base
 end
 ```
 
-!Your `name` of the `params` must be instead of `nick_name`.
+Your `name` of the `params` must be instead of `nick_name`.
 
 AND you have other columns, you can do it like below.
 

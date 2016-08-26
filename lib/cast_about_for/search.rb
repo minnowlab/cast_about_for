@@ -37,14 +37,15 @@ module CastAboutFor
     end
 
     def cast_about_for_by_after search_values, params, seach_model
-      search_column, search_name = obtain_by_star_value(search_values, params[search_values[:field].to_sym])
+      field = search_values[:field].present? ? params[search_values[:field].to_sym] : nil
+      search_column, search_name = obtain_by_star_value(search_values, field)
       seach_model = seach_model.after(params[search_name.to_sym].to_datetime, field: "#{self.to_s.tableize}.#{search_column.to_s}") if params[search_name.to_sym].present?
       seach_model
     end
 
     def cast_about_for_by_before search_values, params, seach_model
-      search_column, search_name = obtain_by_star_value(search_values, params[search_values[:field].to_sym])
-
+      field = search_values[:field].present? ? params[search_values[:field].to_sym] : nil
+      search_column, search_name = obtain_by_star_value(search_values, field)
       seach_model = seach_model.before(params[search_name.to_sym].to_datetime, field: "#{self.to_s.tableize}.#{search_column.to_s}") if params[search_name.to_sym].present?
       seach_model
     end
