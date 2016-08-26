@@ -37,23 +37,25 @@ module CastAboutFor
     end
 
     def cast_about_for_by_after search_values, params, seach_model
+      step = "after"
       if search_values.is_a?(Array)
         search_values.each do |search_value|
-          seach_model = find_records_from_by_star_after(search_value, params, seach_model)
+          seach_model = find_records_from_by_star(search_value, params, seach_model, step)
         end
       else
-        seach_model = find_records_from_by_star_after(search_values, params, seach_model)
+        seach_model = find_records_from_by_star(search_values, params, seach_model, step)
       end
       seach_model
     end
 
     def cast_about_for_by_before search_values, params, seach_model
+      step = "before"
       if search_values.is_a?(Array)
         search_values.each do |search_value|          
-          seach_model = find_records_from_by_star_before(search_value, params, seach_model)
+          seach_model = find_records_from_by_star(search_value, params, seach_model, step)
         end
       else
-        seach_model = find_records_from_by_star_before(search_values, params, seach_model)
+        seach_model = find_records_from_by_star(search_values, params, seach_model, step)
       end
       seach_model
     end
@@ -73,15 +75,9 @@ module CastAboutFor
       end          
     end
 
-    def find_records_from_by_star_before(search_value, params, seach_model)
+    def find_records_from_by_star(search_value, params, seach_model, step)
       search_column, search_name = obtain_by_star_value(search_value, params)
-      seach_model = seach_model.before(params[search_name.to_sym].to_datetime, field: "#{self.to_s.tableize}.#{search_column.to_s}") if params[search_name.to_sym].present?
-      seach_model
-    end
-
-    def find_records_from_by_star_after(search_value, params, seach_model)
-      search_column, search_name = obtain_by_star_value(search_value, params)
-      seach_model = seach_model.after(params[search_name.to_sym].to_datetime, field: "#{self.to_s.tableize}.#{search_column.to_s}") if params[search_name.to_sym].present?
+      seach_model = seach_model.send("#{step}", params[search_name.to_sym].to_datetime, field: "#{self.to_s.tableize}.#{search_column.to_s}") if params[search_name.to_sym].present?
       seach_model
     end
 
