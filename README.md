@@ -145,7 +145,7 @@ class Product < ActiveRecord::Base
   # ...
 end
 ```
-If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '', time: }, {...}, ...]`
+If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '..', time: '..'}, {...}, ...]`
 
 ### Before
 
@@ -176,7 +176,7 @@ class Product < ActiveRecord::Base
   # ...
 end
 ```
-If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '', time: }, {...}, ...]`
+If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '..', time: '..'}, {...}, ...]`
 
 ### Enum
 
