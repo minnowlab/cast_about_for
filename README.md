@@ -38,14 +38,14 @@ You can always use the `#cast_about_for` class method to query:
 
 ``` ruby
 def index
-  @products = Product.cast_about_for(params, jsonapi: true)
+  @products = Product.cast_about_for(params)
 end
 ```
 
 Want to count records? Simple:
 
 ```ruby
-  Product.cast_about_for(params, jsonapi: true).count
+  Product.cast_about_for(params).count
 ```
 
 ## cast_about_for_params Configure
@@ -147,8 +147,8 @@ end
 
 If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '', time: }, {...}, ...]`
 
-
 ### Before
+
 Just like the above `After`.
 If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date <= '2016-07-05 13:09:00')`, you can pass it as an option:
 
@@ -177,7 +177,6 @@ class Product < ActiveRecord::Base
 end
 
 If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '', time: }, {...}, ...]`
-
 
 ### Enum
 
