@@ -201,7 +201,7 @@ Suck as `Equal`. If you want alias of 'category', you can
 # User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
-  cast_about_for_params like: [{category: 'other_name'}]
+  cast_about_for_params enum: [{category: 'other_name'}]
 
   # ...
 end
