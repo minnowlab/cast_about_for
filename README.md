@@ -64,7 +64,7 @@ class Product < ActiveRecord::Base
   # ...
 end
 ```
-OR you want to alias of the 'name' column
+Or you want to alias of the 'name' argument in params
 
 ``` ruby
 # params = { nick_name: "iPhone"}
@@ -77,9 +77,7 @@ class Product < ActiveRecord::Base
 end
 ```
 
-Your `name` of the `params` must be instead of `nick_name`.
-
-AND you have other columns, you can do it like below.
+And you have other alias arguments , you can do it like below.
 
 ``` ruby
 # params = { nick_name: "iPhone", info: "sales", price: "600"}
@@ -108,7 +106,7 @@ class Product < ActiveRecord::Base
 end
 ```
 
-Suck as `Equal`. If you want alias of 'introduce', you can
+Suck as `Equal`. If you want alias of 'introduce' argument, you can
 
 ``` ruby
 class Product < ActiveRecord::Base
@@ -194,7 +192,7 @@ class Product < ActiveRecord::Base
 end
 ```
 
-Suck as `Equal`. If you want alias of 'category', you can
+Suck as `Equal`. If you want alias of 'category' argument, you can
 
 ``` ruby
 # params = {other_name: "food"}
