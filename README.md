@@ -56,7 +56,7 @@ If you want to use a column query the SQL look like `SELECT "products".* FROM "p
 
 ``` ruby
 # params = {name: 'iPhone'}
-# User.cast_about_for(params, jsonapi: false)
+# User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
   cast_about_for_params equal: ['name']
@@ -68,7 +68,7 @@ OR you want to alias of the 'name' column
 
 ``` ruby
 # params = { nick_name: "iPhone"}
-# User.cast_about_for(params, jsonapi: false)
+# User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
   cast_about_for_params equal: [{name: "nick_name"}]
@@ -83,7 +83,7 @@ AND you have other columns, you can do it like below.
 
 ``` ruby
 # params = { nick_name: "iPhone", info: "sales", price: "600"}
-# User.cast_about_for(params, jsonapi: false)
+# User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
   cast_about_for_params equal: [{name: "nick_name"}, {information: "info"}, price]
@@ -99,7 +99,7 @@ If you want to use a column query the SQL look like `SELECT "products".* FROM "p
 
 ``` ruby
 # params = {introduce: 'To'}
-# User.cast_about_for(params, jsonapi: false)
+# User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
   cast_about_for_params like: ['introduce']
@@ -122,30 +122,62 @@ end
 If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date >= '2016-07-05 13:09:00')`, you can pass it as an option:
 
 ``` ruby
-# params = {started_at: '2016-07-05 13:09:00'}
-# User.cast_about_for(params, jsonapi: false)
+# params = {production_started_at: '2016-07-05 13:09:00', by_time: 'production_date'}
+# User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
-  cast_about_for_params after: { production_date: "started_at" }
+  cast_about_for_params after: { field: 'by_time', time: "production_started_at" }
 
   # ...
 end
 ```
+In addition, if your `params` not include `by_time` option. Like `params = {production_started_at: '2016-07-05 13:09:00'}`, the query column will be set the default column `created_at`.
+
+If you want to use multiple column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date >= '2016-07-05 13:09:00') AND (created_at >= '2016-07-04')`, you can do it like this:
+
+``` ruby
+# params = {production_started_at: '2016-07-05 13:09:00', by_time: 'production_date', create_field: 'created_at', production_created_at: '2016-07-04'}
+# User.cast_about_for(params)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}]
+
+  # ...
+end
+
+If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '', time: }, {...}, ...]`
+
 
 ### Before
-
+Just like the above `After`.
 If you want to use a column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date <= '2016-07-05 13:09:00')`, you can pass it as an option:
 
 ``` ruby
-# params = {before_at: '2016-07-05 13:09:00'}
-# User.cast_about_for(params, jsonapi: false)
+# params = {production_before_at: '2016-07-05 13:09:00', by_time: 'production_date'}
+# User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
-  cast_about_for_params before: { production_date: "before_at" }
+  cast_about_for_params before: {field: 'by_time', time: 'production_before_at'}
 
   # ...
 end
 ```
+In addition, if your `params` not include `by_time` option. Like `params = {production_started_at: '2016-07-05 13:09:00'}`, the query column will be set the default column `created_at`.
+
+If you want to use multiple column query the SQL look like `SELECT "products".* FROM "products" WHERE (production_date <= '2016-07-05 13:09:00') AND (created_at <= '2016-07-04')`, you can do it like this:
+
+``` ruby
+# params = {production_started_at: '2016-07-05 13:09:00', by_time: 'production_date', create_field: 'created_at', production_created_at: '2016-07-04'}
+# User.cast_about_for(params)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}]
+
+  # ...
+end
+
+If you want more columns to query, you can code it like this pattern: `cast_about_for_params after: [{field: 'by_time', time: "production_started_at"}, { field: 'create_field', time: "production_created_at"}, {field: '', time: }, {...}, ...]`
+
 
 ### Enum
 
@@ -153,7 +185,7 @@ If you have a column use enum, you can pass it as an option:
 
 ``` ruby
 # params = {category: "food"}
-# User.cast_about_for(params, jsonapi: false)
+# User.cast_about_for(params)
 
 class Product < ActiveRecord::Base
   enum category: {food: 0}
@@ -163,6 +195,18 @@ class Product < ActiveRecord::Base
 end
 ```
 
+Suck as `Equal`. If you want alias of 'category', you can
+
+``` ruby
+# params = {other_name: "food"}
+# User.cast_about_for(params)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params like: [{category: 'other_name'}]
+
+  # ...
+end
+```
 ## Advanced Usage
 
 ### JSON API
@@ -171,7 +215,6 @@ If you are using `JSON API`, you can set in the `#cast_about_for`:
 
 ```ruby
   Product.cast_about_for(params, jsonapi: true) # JSON API
-  Product.cast_about_for(params, jsonapi: false) # or not
 ```
 
 ### Custom Query by Block
