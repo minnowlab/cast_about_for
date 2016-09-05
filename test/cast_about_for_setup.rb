@@ -87,8 +87,8 @@ class Comment < ActiveRecord::Base
   belongs_to :post
   cast_about_for_params(
     like: ['details'], 
-    after: {time: "after_time"}, 
-    before: {time: "before_time"}
+    after: [{time: "after_time"}, {field: {exact: "updated_at"}, time: "previous"}], 
+    before: [{time: "before_time"}, {field: {exact: "updated_at"}, time: "latter"}]
   )
 end
 

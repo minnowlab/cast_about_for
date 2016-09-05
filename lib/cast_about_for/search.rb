@@ -82,7 +82,7 @@ module CastAboutFor
     end
 
     def obtain_by_star_value(value, params)
-      field = value[:field].present? ? params[value[:field].to_sym] : nil
+      field = value[:field].present? ? (value[:field].is_a?(Hash) ? value[:field][:exact] : params[value[:field].to_sym]) : nil
       column = field.present? ? field : :created_at
       raise ArgumentError, "Unknown column: #{column}" unless self.respond_to?(column) || self.column_names.include?(column.to_s)
       [column.to_sym, value[:time]]
