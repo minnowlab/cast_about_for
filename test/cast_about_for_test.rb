@@ -130,8 +130,8 @@ class CastAboutForTest < test_framework
     Comment.create(details: "amy comment", user: @amy, post: tom_extra_post)
 
     users = User.cast_about_for({}) do |seach_model|
-              seach_model = seach_model.joins(posts: :comments).where('comments.details LIKE ?', "%point%")
-            end
+      seach_model = seach_model.joins(posts: :comments).where('comments.details LIKE ?', "%point%")
+    end
     assert_equal 2, users.count
   end
 end

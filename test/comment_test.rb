@@ -43,9 +43,9 @@ class CommentTest < test_framework
   def test_the_block_function
     params = { title: "Tom", details: "To" }
     comments = Comment.cast_about_for(params) do |comments, cast_params|
-             comments = comments.joins(:post).where("posts.title Like ?", "%#{cast_params[:title]}%")  if cast_params[:title].present?
-             comments.joins(:post).where("posts.details Like ?", "%#{cast_params[:details]}%") if cast_params[:details].present?
-           end
+      comments = comments.joins(:post).where("posts.title Like ?", "%#{cast_params[:title]}%")  if cast_params[:title].present?
+      comments.joins(:post).where("posts.details Like ?", "%#{cast_params[:details]}%") if cast_params[:details].present?
+    end
     assert_equal 1, comments.count
   end
 

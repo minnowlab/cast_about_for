@@ -91,14 +91,3 @@ class Comment < ActiveRecord::Base
     before: [{time: "before_time"}, {field: {exact: "updated_at"}, time: "latter"}]
   )
 end
-
-
-
-
-
-
-
-
-
-
-
