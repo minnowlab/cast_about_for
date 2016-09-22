@@ -242,11 +242,14 @@ If you are using `JSON API`, you can set in the `#cast_about_for`:
 ```
 
 ### Custom Query by Block
+If want to find products where belong to some people, you can do it like:
 
 ```ruby
-  Product.cast_about_for(params, jsonapi: true) do |product|
-    product.where(name: 'hello')
-    next product
+  params = { user_name: 'hello', age: 20 }
+
+  Product.cast_about_for(params, jsonapi: true) do |products, cast_params|
+    products = products.joins(:user).where("users.name Like ?", "%#{cast_params[:user_name]}%") if cast_params[:user_name].present?
+    products = products.joins(:user).where("users.age = ?", cast_params[:age]) if cast_params[:age].present?
   end
 ```
 
