@@ -13,7 +13,7 @@ module CastAboutFor
         seach_model = send("cast_about_for_by_#{key}", value, params, seach_model)
       end
 
-      seach_model = yield(seach_model) if block_given?
+      seach_model = yield(seach_model, params) if block_given?
 
       return seach_model
     end

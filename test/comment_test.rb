@@ -15,8 +15,11 @@ class CommentTest < test_framework
       connection.data_sources.each(&cleaner)
     end
 
-    Comment.create(details: 'I am Tom.', created_at: Time.parse('2016-01-06 16:19:00 +0800'), updated_at: Time.parse('2016-01-07 16:19:00 +0800'))
-    Comment.create(details: 'I am Jack.', created_at: Time.parse('2016-02-07 16:19:00 +0800'), updated_at: Time.parse('2016-02-08 16:19:00 +0800'))
+    post_tom = Post.create(title: 'Tom', details: 'I am Tom.')
+    post_jack = Post.create(title: 'Jack', details: 'I am Jack')
+
+    Comment.create(details: 'I am Tom.', post: post_tom, created_at: Time.parse('2016-01-06 16:19:00 +0800'), updated_at: Time.parse('2016-01-07 16:19:00 +0800'))
+    Comment.create(details: 'I am Jack.', post: post_jack, created_at: Time.parse('2016-02-07 16:19:00 +0800'), updated_at: Time.parse('2016-02-08 16:19:00 +0800'))
     Comment.create(details: 'I am Amy.', created_at: Time.parse('2016-03-08 12:10:00 +0800'), updated_at: Time.parse('2016-03-09 12:10:00 +0800'))
     Comment.create(details: 'I am Tony.', created_at: Time.parse('2016-04-09 13:29:00 +0800'), updated_at: Time.parse('2016-04-10 13:29:00 +0800'))
     Comment.create(details: 'I am Yasmine.', created_at: Time.parse('2016-05-10 19:13:00 +0800'), updated_at: Time.parse('2016-05-11 19:13:00 +0800'))
@@ -35,6 +38,15 @@ class CommentTest < test_framework
   def test_before_and_after_function_set_the_exact_field_of_updated_at
     params = {after_time: '2016-03-01', before_time: '2016-09-01', previous: "2016-04-08", latter: "2016-06-11"}
     assert_equal 3, Comment.cast_about_for(params).count
+  end
+
+  def test_the_block_function
+    params = { title: "Tom", details: "To" }
+    comments = Comment.cast_about_for(params) do |comments, cast_params|
+             comments = comments.joins(:post).where("posts.title Like ?", "%#{cast_params[:title]}%")  if cast_params[:title].present?
+             comments.joins(:post).where("posts.details Like ?", "%#{cast_params[:details]}%") if cast_params[:details].present?
+           end
+    assert_equal 1, comments.count
   end
 
 end
