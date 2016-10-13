@@ -77,7 +77,20 @@ module CastAboutFor
       seach_model
     end
 
-    private
+    def cast_about_for_by_joins search_values, params, seach_model
+      p "!!!#{search_values}"
+      p "!!!#{params}"
+      p "!!!#{seach_model}"
+      search_values.each do |association, association_operations|
+        p "0!!!#{association_operations}"
+        query_content, search_name = association_operations
+        p "1!!#{association}"
+        p "2!!#{search_name}"
+        p "3!!#{query_content}"
+        seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{query_content}", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
+      end
+      seach_model
+    end
 
     def obtain_value(value)
       case value
