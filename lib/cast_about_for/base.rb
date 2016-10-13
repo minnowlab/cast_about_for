@@ -5,7 +5,7 @@ module CastAboutFor
 
     module ClassMethods
       include Search
-      CAST_ABOUT_FOR_KEY = [:equal, :like, :enum, :after, :before]
+      CAST_ABOUT_FOR_KEY = [:equal, :like, :enum, :after, :before, :comparison]
       def cast_about_for_params *args
 
         options = args.extract_options!.dup

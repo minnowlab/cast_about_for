@@ -8,6 +8,7 @@ ActiveRecord::Base.connection.create_table :users do |t|
   t.string :introduce
   t.boolean :sex
   t.integer :profession
+  t.integer :weight
   t.integer :sign_in_count, default: 0
   t.datetime :current_sign_in_at
   t.datetime :created_at
@@ -53,7 +54,8 @@ class User < ActiveRecord::Base
     before: {
       field: "by_time", time: "before_at"
     },
-    enum: ['profession']
+    enum: ['profession'],
+    comparison: [{"weight >= ?" => "weight_min"}, {"weight <= ?" => "weight_max"}]
   )
 end
 

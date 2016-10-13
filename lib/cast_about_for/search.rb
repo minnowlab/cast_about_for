@@ -68,6 +68,17 @@ module CastAboutFor
       seach_model
     end
 
+    def cast_about_for_by_comparison search_values, params, seach_model
+      search_values.each do |comparison|
+        comparison.each do |seach_mod, search_name|
+          seach_model = seach_model.where("#{seach_mod}", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
+        end
+      end
+      seach_model
+    end
+
+    private
+
     def obtain_value(value)
       case value
         when Hash then [value.first.first, value.first.last]
