@@ -78,16 +78,15 @@ module CastAboutFor
     end
 
     def cast_about_for_by_joins search_values, params, seach_model
-      p "!!!#{search_values}"
-      p "!!!#{params}"
-      p "!!!#{seach_model}"
-      search_values.each do |association, association_operations|
-        p "0!!!#{association_operations}"
-        query_content, search_name = association_operations
-        p "1!!#{association}"
-        p "2!!#{search_name}"
-        p "3!!#{query_content}"
-        seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{query_content}", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
+      search_values.each do |associations|
+        associations.each do |association, association_operations|
+          association_operations.each do |operations|
+            operations.each do |action, column|
+              seach_model = send("#{action.to_s}_operation", association, column, params, seach_model)
+            end
+          end
+          # seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{query_content}", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
+        end
       end
       seach_model
     end
@@ -110,6 +109,18 @@ module CastAboutFor
       column = field.present? ? field : :created_at
       raise ArgumentError, "Unknown column: #{column}" unless self.respond_to?(column) || self.column_names.include?(column.to_s)
       [column.to_sym, value[:time]]
+    end
+
+    def like_operation(association, column, params, seach_model)
+      search_column, search_name = obtain_value(column)
+      seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{search_column} LIKE ?", "%#{params[search_name.to_sym]}%") if params.present? && params[search_name.to_sym].present?
+      seach_model
+    end
+
+    def equal_operation(association, column, params, seach_model)
+      search_column, search_name = obtain_value(column)
+      seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{search_column} = ?", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
+      seach_model
     end
   end
 end
