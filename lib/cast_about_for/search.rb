@@ -85,7 +85,6 @@ module CastAboutFor
               seach_model = send("#{action.to_s}_operation", association, column, params, seach_model)
             end
           end
-          # seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{query_content}", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
         end
       end
       seach_model
