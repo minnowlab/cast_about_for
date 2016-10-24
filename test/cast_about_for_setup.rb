@@ -92,6 +92,6 @@ class Comment < ActiveRecord::Base
     after: [{time: "after_time"}, {field: {exact: "updated_at"}, time: "previous"}], 
     before: [{time: "before_time"}, {field: {exact: "updated_at"}, time: "latter"}],
     # joins: [{post: ["title LIKE ?", :title]}]
-    joins: [{post: [like: {title: :title}]}, {user: [equal: {name: :name}]}]
+    joins: [{post: [like: [{title: :title}, {details: :det}]]}, {user: [equal: :name]}]
   )
 end

@@ -15,10 +15,12 @@ class CommentTest < test_framework
       connection.data_sources.each(&cleaner)
     end
 
+    user = User.create(name: "Tom.")
+
     post_tom = Post.create(title: 'Tom', details: 'I am Tom.')
     post_jack = Post.create(title: 'Jack', details: 'I am Jack')
 
-    Comment.create(details: 'I am Tom.', post: post_tom, created_at: Time.parse('2016-01-06 16:19:00 +0800'), updated_at: Time.parse('2016-01-07 16:19:00 +0800'))
+    tom_comment = Comment.create(details: 'I am Tom.', post: post_tom, user: user, created_at: Time.parse('2016-01-06 16:19:00 +0800'), updated_at: Time.parse('2016-01-07 16:19:00 +0800'))
     Comment.create(details: 'I am Tom II.', post: post_tom, created_at: Time.parse('2016-01-06 16:20:00 +0800'), updated_at: Time.parse('2016-01-07 16:19:00 +0800'))
     Comment.create(details: 'I am Jack.', post: post_jack, created_at: Time.parse('2016-02-07 16:19:00 +0800'), updated_at: Time.parse('2016-02-08 16:19:00 +0800'))
     Comment.create(details: 'I am Amy.', created_at: Time.parse('2016-03-08 12:10:00 +0800'), updated_at: Time.parse('2016-03-09 12:10:00 +0800'))
@@ -51,8 +53,8 @@ class CommentTest < test_framework
   end
 
   def test_find_out_comments_with_join_key
-    params = {title: "om"}
-    assert_equal 2, Comment.cast_about_for(params).count
+    params = {title: "om", det: "om", name: "Tom."}
+    assert_equal 1, Comment.cast_about_for(params).count
   end
 
 end
