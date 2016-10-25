@@ -80,7 +80,8 @@ class Post < ActiveRecord::Base
   cast_about_for_params(
     like: ['title', 'details'], 
     after: [{field: "created_field", time: "after_created_time"}, {field: "published_field", time: "after_published_time"}],
-    before: [{field: "created_field", time: "before_created_time"}, {field: "published_field", time: "before_published_time"}]
+    before: [{field: "created_field", time: "before_created_time"}, {field: "published_field", time: "before_published_time"}],
+    includes: [:user, :comments]
   )
 end
 
