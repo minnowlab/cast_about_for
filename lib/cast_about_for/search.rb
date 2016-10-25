@@ -90,6 +90,11 @@ module CastAboutFor
       seach_model
     end
 
+    def cast_about_for_by_includes search_values, params, seach_model
+      seach_model = seach_model.includes(search_values)
+      seach_model
+    end
+
     def obtain_value(value)
       case value
         when Hash then [value.first.first, value.first.last]
