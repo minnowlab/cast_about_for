@@ -21,7 +21,7 @@ module CastAboutFor
 
             association_operations.each do |operations|
               operations.each_value do |columns|
-                klass = Object.const_get("#{association_name}".capitalize.singularize)
+                klass = Object.const_get("#{association_name}".camelize.singularize)
                 columns = columns.is_a?(Array) ? columns : [columns]
                 columns.each do |column|
                   column = column.is_a?(Hash) ? column.first.first : column

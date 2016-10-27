@@ -12,6 +12,7 @@ ActiveRecord::Base.connection.create_table :users do |t|
   t.integer :sign_in_count, default: 0
   t.datetime :current_sign_in_at
   t.datetime :created_at
+  t.integer :company_group_id
 end
 
 ActiveRecord::Base.connection.create_table :admins do |t|
@@ -41,9 +42,21 @@ ActiveRecord::Base.connection.create_table :posts do |t|
   t.datetime :published_at
 end
 
+ActiveRecord::Base.connection.create_table :company_groups do |t|
+  t.string :name
+  t.text :details
+  t.datetime :created_at
+  t.datetime :updated_at
+end
+
+class CompanyGroup < ActiveRecord::Base
+  has_many :users
+end
+
 class User < ActiveRecord::Base
   has_many :posts
   has_many :comments
+  belongs_to :company_group
   enum profession: {other_profession: 0, student: 1, worker: 2, teacher: 3}
   cast_about_for_params(
     equal: ['name', 'sex'], 
@@ -55,7 +68,8 @@ class User < ActiveRecord::Base
       field: "by_time", time: "before_at"
     },
     enum: ['profession'],
-    comparison: [{"weight >= ?" => "weight_min"}, {"weight <= ?" => "weight_max"}]
+    comparison: [{"weight >= ?" => "weight_min"}, {"weight <= ?" => "weight_max"}],
+    joins: [company_group: [like: {name: :company_group_name}]]
   )
 end
 
