@@ -16,11 +16,11 @@ module CastAboutFor
       def validate_join(record, value)
         value.each do |association|
           association.each do |association_name, association_operations|
-            # _reflections method come from rails ActiveRecord::Reflection
-            raise ArgumentError, "Unknown association #{association_name} fo #{record}" unless record._reflections.keys.include?(association_name.to_s)
+            validate_join_associations(record, association_name)
 
             association_operations.each do |operations|
               operations.each_value do |columns|
+                association_name = association_name.is_a?(Hash) ? association_name.flatten.last : association_name
                 klass = Object.const_get("#{association_name}".camelize.singularize)
                 columns = columns.is_a?(Array) ? columns : [columns]
                 columns.each do |column|
@@ -45,6 +45,22 @@ module CastAboutFor
           attribute = attribute.is_a?(Hash) ? attribute.first.first : attribute
           raise ArgumentError, "Unknown column: #{attribute} fo #{record}" unless record.respond_to?(attribute) || record.column_names.include?(attribute.to_s)
         end
+      end
+
+      def validate_join_associations(record, association_name)
+        if association_name.is_a?(Hash)
+          association_name.each do |key, value|
+            validate_join_association(record, key)
+            validate_join_association(Object.const_get("#{key}".camelize.singularize), value)
+          end
+        else
+          validate_join_association(record, association_name)
+        end
+      end
+
+      def validate_join_association(record, association_name)
+        # _reflections method come from rails ActiveRecord::Reflection
+        raise ArgumentError, "Unknown association #{association_name} fo #{record}" unless record._reflections.keys.include?(association_name.to_s)
       end
     end
   end
