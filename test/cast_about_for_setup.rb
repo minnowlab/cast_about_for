@@ -37,6 +37,7 @@ ActiveRecord::Base.connection.create_table :posts do |t|
   t.string :title
   t.text :details
   t.integer :user_id
+  t.integer :admin_id
   t.datetime :created_at
   t.datetime :updated_at
   t.datetime :published_at
@@ -90,6 +91,7 @@ end
 
 class Post < ActiveRecord::Base
   belongs_to :user
+  belongs_to :admin
   has_many :comments
   cast_about_for_params(
     like: ['title', 'details'], 
@@ -107,6 +109,6 @@ class Comment < ActiveRecord::Base
     after: [{time: "after_time"}, {field: {exact: "updated_at"}, time: "previous"}], 
     before: [{time: "before_time"}, {field: {exact: "updated_at"}, time: "latter"}],
     # joins: [{post: ["title LIKE ?", :title]}]
-    joins: [{post: [like: [{title: :title}, {details: :det}]]}, {user: [equal: :name]}]
+    joins: [{post: [like: [{title: :title}, {details: :det}]]}, {user: [equal: :name]}, {{post: :admin} => [like: {name: :admin_name}]}]
   )
 end

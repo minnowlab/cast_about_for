@@ -16,9 +16,11 @@ class CommentTest < test_framework
     end
 
     user = User.create(name: "Tom.")
+    admin = Admin.create(name: "Admin")
 
     post_tom = Post.create(title: 'Tom', details: 'I am Tom.')
     post_jack = Post.create(title: 'Jack', details: 'I am Jack')
+    post_admin = Post.create(title: 'Admin', details: 'I am Admin', admin: admin)
 
     tom_comment = Comment.create(details: 'I am Tom.', post: post_tom, user: user, created_at: Time.parse('2016-01-06 16:19:00 +0800'), updated_at: Time.parse('2016-01-07 16:19:00 +0800'))
     Comment.create(details: 'I am Tom II.', post: post_tom, created_at: Time.parse('2016-01-06 16:20:00 +0800'), updated_at: Time.parse('2016-01-07 16:19:00 +0800'))
@@ -31,6 +33,7 @@ class CommentTest < test_framework
     Comment.create(details: 'I am Kevin.', created_at: Time.parse('2016-08-03 23:23:00 +0800'), updated_at: Time.parse('2016-08-04 23:23:00 +0800'))
     Comment.create(details: 'I am Zita.', created_at: Time.parse('2016-09-04 12:00:00 +0800'), updated_at: Time.parse('2016-09-05 12:00:00 +0800'))
     Comment.create(details: 'I am Zara.', created_at: Time.parse('2016-09-05 04:03:00 +0800'), updated_at: Time.parse('2016-09-06 04:03:00 +0800'))
+    @admin_post_comment = Comment.create(details: "Find the post Admin", post: post_admin)
   end
 
   def test_before_and_after_function_if_field_not_present_and_the_default_column_is_created_at
@@ -55,6 +58,11 @@ class CommentTest < test_framework
   def test_find_out_comments_with_join_key
     params = {title: "om", det: "om", name: "Tom."}
     assert_equal 1, Comment.cast_about_for(params).count
+  end
+
+  def test_find_out_comments_with_join_nest_key
+    params = {admin_name: "Admin"}
+    assert_equal @admin_post_comment, Comment.cast_about_for(params).take
   end
 
 end

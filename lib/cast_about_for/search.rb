@@ -116,21 +116,35 @@ module CastAboutFor
     end
 
     def like_operation(association, columns, params, seach_model)
+      association, association_name = obtain_joins_value(association)
       columns = columns.is_a?(Array) ? columns : [columns]
       columns.each do |column|
         search_column, search_name = obtain_value(column)
-        seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{search_column} LIKE ?", "%#{params[search_name.to_sym]}%") if params.present? && params[search_name.to_sym].present?
+        seach_model = seach_model.joins(association).where("#{association_name.to_s.pluralize}.#{search_column} LIKE ?", "%#{params[search_name.to_sym]}%") if params.present? && params[search_name.to_sym].present?
       end
+      p 
       seach_model
     end
 
     def equal_operation(association, columns, params, seach_model)
-      columns = columns.is_a?(Array) ? columns : [columns] #
+      association, association_name = obtain_joins_value(association)
+      columns = columns.is_a?(Array) ? columns : [columns]
       columns.each do |column|
         search_column, search_name = obtain_value(column)
-        seach_model = seach_model.joins("#{association.to_s}".to_sym).where("#{association.to_s.pluralize}.#{search_column} = ?", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
+        seach_model = seach_model.joins(association).where("#{association_name.to_s.pluralize}.#{search_column} = ?", params[search_name.to_sym]) if params.present? && params[search_name.to_sym].present?
       end
       seach_model
+    end
+
+    
+    def obtain_joins_value(value) 
+      if Hash === value  #如果是hash则使用嵌入式joins
+        association = {}
+        value.each{|k, v| association[k.to_sym] = v.to_sym}
+        [association, value.flatten.last]
+      else
+        [value.to_sym, value]
+      end
     end
   end
 end
