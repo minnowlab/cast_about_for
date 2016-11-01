@@ -231,6 +231,67 @@ class Product < ActiveRecord::Base
   # ...
 end
 ```
+
+### Comparison
+If you want to compare a column, the sql like this: The SQL: `SELECT "products".* FROM "products" WHERE (weight >= '100' AND weight <= '1000')`
+you can do it like this:
+```ruby
+# params = {weight_min: 100, weight_max: 1000}
+# Product.cast_about_for(params)
+
+class Product < ActiveRecord::Base
+  cast_about_for_params comparison: [{"weight >= ?" => "weight_min"}, {"weight <= ?" => "weight_max"}]
+
+end
+```
+
+###Includes
+If you want to `includes` other models, you can do it like this
+```ruby
+class Product < ActiveRecord::Base
+  cast_about_for_params includes: [:user, :items]
+
+#This will make `product` include `user` and `items` automatically
+#Like:  Product.includes(:user, :items)
+end
+
+```
+###Joins
+
+If you want to join a model you can do it like this:
+
+```ruby
+Example 1
+
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{user: [equal: :name]}]
+  
+end
+
+# params = {name: "user"}
+# Product.cast_about_for(params)
+# It will be generates like this: Product.joins(:user).where("users.name = ?", "user")
+# The sql would like this: `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (fittings.name = 'user')`
+
+Example 2
+If you want to nickname the `name` of the params like: 
+# params = {user_name: "user"}
+# Product.cast_about_for(params)
+
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{user: [equal: {name: :user_name}]}]
+  
+end
+
+# Also will generates like this: Product.joins(:user).where("users.name = ?", "user") 
+# The sql would like this: `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (fittings.name = 'user')`
+
+Example 3
+
+
+```
+
+
 ## Advanced Usage
 
 ### JSON API
