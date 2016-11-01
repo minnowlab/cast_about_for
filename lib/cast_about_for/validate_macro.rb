@@ -6,12 +6,14 @@ module CastAboutFor
       def validate(record, options)
         options.each do |key, value|
           case key
-          when :joins then validate_join(record, value)
-          when :includes then validate_includes(record, value)
-          else self.validate_others(record, value)
+          when :joins then send("validate_join", record, value)
+          when :includes then send("validate_includes", record, value)
+          else send("validate_others", record, value)
           end
         end
       end
+
+      private
 
       def validate_join(record, value)
         value.each do |association|
