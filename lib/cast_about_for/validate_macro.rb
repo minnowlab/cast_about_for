@@ -48,7 +48,7 @@ module CastAboutFor
       end
 
       def validate_join_associations(record, association_name)
-        if association_name.is_a?(Hash)
+        if association_name.is_a?(Hash)     #检查是否为嵌入式的joins，例如: A.joins(b: :c)
           association_name.each do |key, value|
             validate_join_association(record, key)
             validate_join_association(Object.const_get("#{key}".camelize.singularize), value)

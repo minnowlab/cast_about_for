@@ -37,6 +37,7 @@ ActiveRecord::Base.connection.create_table :posts do |t|
   t.string :title
   t.text :details
   t.integer :user_id
+  t.integer :admin_id
   t.datetime :created_at
   t.datetime :updated_at
   t.datetime :published_at
