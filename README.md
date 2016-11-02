@@ -261,7 +261,7 @@ end
 If you want to join a model you can do it like this:
 
 ```ruby
-Example 1
+Example 1 
 
 class Product <  ActiveRecord::Base
   cast_about_for_params joins: [{user: [equal: :name]}]
@@ -271,8 +271,18 @@ end
 # params = {name: "user"}
 # Product.cast_about_for(params)
 # It will be generates like this: Product.joins(:user).where("users.name = ?", "user")
-# The sql would like this: `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (fittings.name = 'user')`
+# The sql would like this: `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (users.name = 'user')`
 
+If you want to query the condition of "LIKE", do it like this
+
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{user: [like: :name]}]
+  
+end
+Then the sql would be like this:  `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (users.name Like 'user')`
+
+
+--------
 Example 2
 If you want to nickname the `name` of the params like: 
 # params = {user_name: "user"}
@@ -284,10 +294,72 @@ class Product <  ActiveRecord::Base
 end
 
 # Also will generates like this: Product.joins(:user).where("users.name = ?", "user") 
-# The sql would like this: `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (fittings.name = 'user')`
+# The sql would like this: `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (users.name = 'user')`
 
+--------
 Example 3
+If multiple user columns that you want to query, you can do it like this:
+# params = {name: "user", age: 18}
+# Product.cast_about_for(params)
 
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{user: [equal: [:name, :age]}]
+  
+end
+# Also will generates like this: Product.joins(:user).where("users.name = ? AND users.age = ?", "user", "18") 
+# The sql would like this: `SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" WHERE (users.name = 'user' AND users.age = 18)`
+
+
+If you want to nickname the params:
+# params = {user_name: "user", user_age: 18}
+# Product.cast_about_for(params)
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{user: [equal: [{name: :user_name}, {age: :user_age}]}]
+  
+end
+
+--------
+Example 4
+You can use the `equal` and `like` at the same time:
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{user: [equal: :age], [like: :name]}]
+  
+end
+
+`OR`
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{user: [equal: [:age, :height]], [like: [:name, :roles]]}]
+  
+end
+
+--------
+Example 5
+Nested joins:
+
+Now, I have `product` `user` `company` models, 
+
+class Product <  ActiveRecord::Base
+  belongs_to :user
+end
+
+class User <  ActiveRecord::Base
+  belongs_to :company
+  has_many :products
+end
+
+class Company <  ActiveRecord::Base
+  has_many :user
+end
+
+I have company `name`, and now I want to query the products through the user who belong to the company, so I can do it like this:
+
+class Product <  ActiveRecord::Base
+  cast_about_for_params joins: [{{user: :company} => [like: {name: :company_name}]}]
+  
+end
+# params = {company_name: "Teo"}
+# Product.cast_about_for(params)
+# The sql would like this:  SELECT "products".* FROM "products" INNER JOIN "users" ON "users"."id" = "products"."user_id" INNER JOIN "companies" ON "companies"."id" = "users"."company_id" WHERE (companies.name LIKE 'Teo')
 
 ```
 
